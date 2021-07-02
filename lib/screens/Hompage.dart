@@ -22,22 +22,26 @@ class _HomepageState extends State<Homepage> {
     var url = Uri.parse(
         'https://api.openweathermap.org/data/2.5/weather?q=lagos&units=imperial&appid=534f70a1d48b99f9d36fd105642b36ef');
     http.Response response = await http.get(url);
-    var results = jsonDecode(response.body);
-    // print(results);
-    setState(() {
-      this.temp = results['main']['temp'];
-      this.description = results['weather'][0]['description'];
-      this.currently = results['weather'][0]['main'];
-      this.humidity = results['main']['humidity'];
-      this.windspeed = results['wind']['speed'];  
-    });
+    if (response.statusCode == 200) {
+      var results = jsonDecode(response.body);
+      setState(() {
+        this.temp = results['main']['temp'];
+        this.description = results['weather'][0]['description'];
+        this.currently = results['weather'][0]['main'];
+        this.humidity = results['main']['humidity'];
+        this.windspeed = results['wind']['speed'];
+      });
+    } else {
+      throw Exception('Error loading request Url info');
+    }
   }
 
   @override
-void  initState (){
-  super.initState();
-  this.getWeather();
-}
+  void initState() {
+    super.initState();
+    this.getWeather();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,7 +66,7 @@ void  initState (){
                   ),
                 ),
                 Text(
-                 temp !=null ? temp.toString() +'\u00B0':'loading',
+                  temp != null ? temp.toString() + '\u00B0' : 'loading',
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 40.0,
@@ -71,7 +75,7 @@ void  initState (){
                 Padding(
                   padding: EdgeInsets.only(top: 10.0),
                   child: Text(
-                    currently !=null ? currently.toString(): 'loading',
+                    currently != null ? currently.toString() : 'loading',
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 12.0,
@@ -86,20 +90,29 @@ void  initState (){
             padding: EdgeInsets.all(20.0),
             child: ListView(
               children: [
-               
-              WeatherTile(icon: FontAwesomeIcons.thermometer, title: 'Temparature', 
-              subtitle: temp !=null ? temp.toString() +'\u00B0':'loading',),
-
-              WeatherTile(icon: FontAwesomeIcons.cloudRain, title: 'Weather', 
-              subtitle: description !=null ? description.toString():'loading'),
-
-              WeatherTile(icon: FontAwesomeIcons.cloudSun, title: 'Humidity', 
-              subtitle: humidity !=null ? humidity.toString() :'loading',),
-
-              WeatherTile(icon: FontAwesomeIcons.wind, title: 'Wind Speed', 
-              subtitle: windspeed !=null ? windspeed.toString():'loading',),
-                
-              
+                WeatherTile(
+                  icon: FontAwesomeIcons.thermometer,
+                  title: 'Temparature',
+                  subtitle:
+                      temp != null ? temp.toString() + '\u00B0' : 'loading',
+                ),
+                WeatherTile(
+                    icon: FontAwesomeIcons.cloudRain,
+                    title: 'Weather',
+                    subtitle: description != null
+                        ? description.toString()
+                        : 'loading'),
+                WeatherTile(
+                  icon: FontAwesomeIcons.cloudSun,
+                  title: 'Humidity',
+                  subtitle: humidity != null ? humidity.toString() : 'loading',
+                ),
+                WeatherTile(
+                  icon: FontAwesomeIcons.wind,
+                  title: 'Wind Speed',
+                  subtitle:
+                      windspeed != null ? windspeed.toString() : 'loading',
+                ),
               ],
             ),
           ))
